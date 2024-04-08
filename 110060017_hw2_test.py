@@ -180,6 +180,13 @@ class Agent:
         self.current_frame = (self.current_frame + 1) % self.config["frame_skipping"]
         return self.last_action
 
+    def SaveModel(self):
+        # Save model parameters and config
+        current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        data_path = current_dir / "110060017_hw2_data.py"
+
+        torch.save({"model": self.network.state_dict()}, data_path)
+
     def LoadModel(self):
         current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
         data_path = current_dir / "110060017_hw2_data.py"
