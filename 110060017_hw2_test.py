@@ -77,7 +77,8 @@ class NoisyLinear(nn.Linear):
         self.register_buffer("bias_epsilon", torch.zeros(out_features))
 
     def forward(self, x):
-        return nn.functional.linear(x, self.weight + self.weight_sigma * self.weight_epsilon, self.bias + self.bias_sigma * self.bias_epsilon)
+        # return nn.functional.linear(x, self.weight + self.weight_sigma * self.weight_epsilon, self.bias + self.bias_sigma * self.bias_epsilon)
+        return nn.functional.linear(x, self.weight, self.bias)
 
 
 class NETWORK(nn.Module):
