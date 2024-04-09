@@ -77,7 +77,6 @@ class NoisyLinear(nn.Linear):
         self.register_buffer("bias_epsilon", torch.zeros(out_features))
 
     def forward(self, x):
-        # return nn.functional.linear(x, self.weight + self.weight_sigma * self.weight_epsilon, self.bias + self.bias_sigma * self.bias_epsilon)
         return nn.functional.linear(x, self.weight, self.bias)
 
 
@@ -130,7 +129,6 @@ class Agent:
     def __init__(self):
         self.config = {
             "frame_skipping": 4,
-            "epsilon": 0.02,
             "action_space": SIMPLE_MOVEMENT,
         }
 
@@ -163,30 +161,12 @@ class Agent:
             action = torch.argmax(self.network(state)).item()
         return action
 
-    def RandomPolicy(self, state=None):
-        return np.random.randint(self.action_space_len)
-
-    def EpsilonGreedyPolicy(self, state):
-        # Exploration
-        if np.random.rand() < self.config["epsilon"]:
-            return self.RandomPolicy()
-        # Exploitation
-        else:
-            return self.GreedyPolicy(state)
-
     def act(self, observation):
         if self.current_frame == 0:
             observation = self.ProcessObservation(observation)
             self.last_action = self.GreedyPolicy(observation)
         self.current_frame = (self.current_frame + 1) % self.config["frame_skipping"]
         return self.last_action
-
-    def SaveModel(self):
-        # Save model parameters and config
-        current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-        data_path = current_dir / "110060017_hw2_data.py"
-
-        torch.save({"model": self.network.state_dict()}, data_path)
 
     def LoadModel(self):
         current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
